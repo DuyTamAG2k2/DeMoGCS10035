@@ -11,6 +11,10 @@ namespace DeMoGCS10035.Areas.Admin.Controllers
         [Route("index")]
         public IActionResult Index()
         {
+            if (HttpContext.Session.GetString("user")==null)
+            {
+                return Redirect("Login");
+            }
             return View();
         }
     }
