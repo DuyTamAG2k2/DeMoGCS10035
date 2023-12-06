@@ -4,6 +4,7 @@
 @{
     Layout = null;
 }
+@model User
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,31 +37,28 @@
                             </div>
                             <h4>New here?</h4>
                             <h6 class="font-weight-light">Signing up is easy. It only takes a few steps</h6>
-                            <form class="pt-3">
+                              @if (ViewBag.ErrorMessage != null)
+                            {
+                                <div class="text-danger">@ViewBag.ErrorMessage</div>
+                            }
+                            @using (Html.BeginForm("SignUp", "Auth", FormMethod.Post, new { @class = "pt-3" }))
+                            {
                                 <div class="form-group">
-                                    <input type="text" class="form-control form-control-lg" id="exampleInputUsername1" placeholder="Username">
+                                    @Html.TextBoxFor(user => user.FullName, new { @class = "form-control form-control-lg", placeholder = "FullName" })
                                 </div>
                                 <div class="form-group">
-                                    <input type="email" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="Email">
+                                    @Html.TextBoxFor(user => user.Username, new { @class = "form-control form-control-lg", placeholder = "Username" })
                                 </div>
-                             
                                 <div class="form-group">
-                                    <input type="password" class="form-control form-control-lg" id="exampleInputPassword1" placeholder="Password">
-                                </div>
-                                <div class="mb-4">
-                                    <div class="form-check">
-                                        <label class="form-check-label text-muted">
-                                            <input type="checkbox" class="form-check-input"> I agree to all Terms & Conditions
-                                        </label>
-                                    </div>
+                                    @Html.PasswordFor(user => user.Password, new { @class = "form-control form-control-lg", placeholder = "Password" })
                                 </div>
                                 <div class="mt-3">
-                                    <a class="btn btn-block btn-gradient-primary btn-lg font-weight-medium auth-form-btn" href="~/AdminLayout/index.html">SIGN UP</a>
+                                    <button formmethod="post" type="submit" class="btn btn-block btn-gradient-primary btn-lg font-weight-medium auth-form-btn">Sign Up</button>
                                 </div>
                                 <div class="text-center mt-4 font-weight-light">
-                                    Already have an account? <a href="/login" class="text-primary">Login</a>
+                                    Already have an account? @Html.ActionLink("Sign In", "SignIn", "Auth", null, new { @class = "text-primary" })
                                 </div>
-                            </form>
+                            }
                         </div>
                     </div>
                 </div>

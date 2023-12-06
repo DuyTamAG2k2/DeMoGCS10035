@@ -26,24 +26,34 @@ namespace DeMoGCS10035.Controllers
 
         [HttpPost]
         [Route("login")]
-        public IActionResult Login(User user)
+        public  IActionResult Login(User user)
         {
-            Console.WriteLine("user"+user.Username.ToString());
-            var loggedInUser = db.Users.FirstOrDefault(u => u.Username == user.Username && u.Password == user.Password);
-
-            if (loggedInUser != null)
+            if(HttpContext.Session.GetString("user") == null)
             {
-                // Đăng nhập thành công, lưu thông tin người dùng vào Session hoặc Cookie
-                return RedirectToAction("Index", "Home");
+                var loggedInUser = db.Users.FirstOrDefault(u => u.Username == user.Username && u.Password == user.Password);
+                if (loggedInUser != null)
+                {
+                    var accessInfoSave = new
+                    {
+                        userName = loggedInUser.FullName,
+                        role = loggedInUser.Role
+                    };
+                    string jsonSave = JsonConvert.SerializeObject(accessInfoSave);
+                    HttpContext.Session.SetString("user", jsonSave);
+                    TempData["Success"] = "Đăng nhập thành công";
+                    Console.Write(jsonSave);
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    ViewData["Error"] = "Tên đăng nhập hoặc mật khẩu không đúng.";
+                    return View();
+                }
             }
-            else
-            {
-                ViewBag.Error = "Tên đăng nhập hoặc mật khẩu không đúng.";
-                return View();
-            }
+            return RedirectToAction("Home", "Index");
         }
-        [Route("signup")]
         [HttpGet]
+        [Route("signup")]
         public IActionResult SignUp()
         {
             if (HttpContext.Session.GetString("user") == null)
@@ -51,19 +61,22 @@ namespace DeMoGCS10035.Controllers
                 return View();
             }
             return RedirectToAction("Index", "Home");
-        } 
+        }
         [HttpPost]
+        [Route("signup")]
         public IActionResult SignUp(User user)
         {
-            var u = db.Users.Where(x => x.Username.Equals(user.Username));
-            if(u != null)
+            var u = db.Users.FirstOrDefault(x => x.Username.Equals(user.Username));
+            if(u == null)
             {
                 db.Add(user);
-                TempData["RegistSuccess"] = "Đăng ký thành công";
-                return RedirectToAction("Login");
+                db.SaveChanges();
+                TempData["Success"] = "Đăng ký thành công";
+                return Redirect("Login");
             }
-            TempData["ErrorMessage"] = "Đăng ký không thành công. Vui lòng kiểm tra thông tin và thử lại.";
-            return RedirectToAction("SignUp");
+            
+            ViewBag.ErrorMessage = "Tài khoản đã tồn tại trong hệ thống, vui lòng sử dụng tài khoản khác";
+            return View("SignUp");
         }
 
     }

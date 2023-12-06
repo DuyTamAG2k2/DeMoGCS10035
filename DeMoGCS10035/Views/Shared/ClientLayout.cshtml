@@ -50,18 +50,30 @@
                     </div>
                     <div class="col-md-6">
                         <div class="right-element">
-                            <a href="#" class="user-account for-buy">
-                                <i class="icon icon-user"></i><span>Account</span>
+                            @if (ViewData["Login"] != null)
+                            {
+                                <div class="user">@ViewData["Login"]</div>
+                               
+                                <ul class="user-option">
+                                    <li>
+                                        @if(ViewData["Role"]!=null)
+                                        {
+                                           <a href="/admin">Admin Dashboard</a> 
+                                        }
+                                        <a href="#">Logout</a>
+                                    </li>
+                                </ul>
+                            }else{
+                            <a href="/login" class="user-account for-buy">
+                                <span>Login</span>
                             </a>
-                            <a href="#" class="cart for-buy">
-                                <i class="icon icon-clipboard"></i><span>
-                                    Cart:(0
-                                    $)
+                            <a href="/signup" class="cart for-buy">
+                                <span>
+                                    Regist
                                 </span>
                             </a>
-
+                            }
                             <div class="action-menu">
-
                                 <div class="search-bar">
                                     <a href="#" class="search-button search-toggle" data-selector="#header-wrap">
                                         <i class="icon icon-search"></i>
@@ -130,6 +142,12 @@
         </header>
 
     </div><!--header-wrap-->
+    @if (ViewData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+            <strong>@ViewData["Success"]</strong>
+        </div>
+    }
     @RenderBody()
     <section id="popular-books" class="bookshelf py-5 my-5">
         <div class="container">
@@ -662,7 +680,6 @@
 
                 </div>
                 <div class="col-md-2">
-
                     <div class="footer-menu">
                         <h5>My account</h5>
                         <ul class="menu-list">
